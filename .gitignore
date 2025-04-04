@@ -1,0 +1,5 @@
+myenv/
+bot/test.py
+udo journalctl -xeu postgresql@14-main.service
+bot/text/
+bot/test/
