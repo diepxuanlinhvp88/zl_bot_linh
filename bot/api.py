@@ -65,7 +65,7 @@ class RoomInsertRequest(BaseModel):
     media: List[str] = []  # danh sách URL hình ảnh
     
 class RoomMediaOut(BaseModel):
-    url: str
+    href: str
 
     class Config:
         orm_mode = True
@@ -102,6 +102,7 @@ class RoomOut(BaseModel):
     class Config:
         orm_mode = True
         from_attributes = True
+        exclude = {'media'}
 
 
 def get_db():
@@ -168,11 +169,34 @@ def search_rooms(
             continue
         distance = haversine(lat_input, lon_input, room.lat, room.lon)
         if distance <= radius:
-            # Chuyển ORM object sang Pydantic model và gán thêm trường distance
-            room_out = RoomOut.from_orm(room)
-            # Transform media to list of URLs
-            room_out.media = [media.url for media in room.media]
-            room_out.distance = distance
+            # Tạo đối tượng RoomOut bằng cách chỉ định tất cả các trường
+            room_out = RoomOut(
+                id=room.id,
+                msg_id=room.msg_id,
+                cli_msg_id=room.cli_msg_id,
+                msg_type=room.msg_type,
+                uid_from=room.uid_from,
+                id_to=room.id_to,
+                d_name=room.d_name,
+                ts=room.ts,
+                status=room.status,
+                content=room.content,
+                address=room.address,
+                price=room.price,
+                room_type=room.room_type,
+                floor=room.floor,
+                elevator=room.elevator,
+                area=room.area,
+                furniture=room.furniture,
+                services=room.services,
+                contract=room.contract,
+                notes=room.notes,
+                created_at=room.created_at,
+                lat=room.lat,
+                lon=room.lon,
+                media=[media.href for media in room.media],
+                distance=distance
+            )
             filtered_rooms.append(room_out)
 
     # Sắp xếp danh sách theo khoảng cách (tăng dần)
@@ -247,7 +271,35 @@ def insert_room(request: RoomInsertRequest, db: Session = Depends(get_db)):
         db.add(room)
         db.commit()
         db.refresh(room)
-        return room
+        
+        # Tạo đối tượng RoomOut bằng cách chỉ định tất cả các trường
+        room_out = RoomOut(
+            id=room.id,
+            msg_id=room.msg_id,
+            cli_msg_id=room.cli_msg_id,
+            msg_type=room.msg_type,
+            uid_from=room.uid_from,
+            id_to=room.id_to,
+            d_name=room.d_name,
+            ts=room.ts,
+            status=room.status,
+            content=room.content,
+            address=room.address,
+            price=room.price,
+            room_type=room.room_type,
+            floor=room.floor,
+            elevator=room.elevator,
+            area=room.area,
+            furniture=room.furniture,
+            services=room.services,
+            contract=room.contract,
+            notes=room.notes,
+            created_at=room.created_at,
+            lat=room.lat,
+            lon=room.lon,
+            media=[media.href for media in room.media]
+        )
+        return room_out
 
     except Exception as e:
         db.rollback()
