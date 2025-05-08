@@ -114,7 +114,7 @@ def get_db():
         
 def geocoding_openmaps(address):
     base_url = "https://mapapis.openmap.vn/v1"
-    apikey = "tKqXn5rUkQ5QOvZrMdrXa5g279xpOxt7"
+    apikey = "tKqXn5rUkQ55g279xpOxt7"
 
     res = requests.get(f"{base_url}/geocode/forward?address={address}&apikey={apikey}")
 
