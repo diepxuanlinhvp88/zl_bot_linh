@@ -8,7 +8,7 @@ from tqdm import tqdm
 import json
 import time
 
-client = genai.Client(api_key="AIzaSyBRvzfm-1xNEQe4HYBrGt2qGBsOdRCa8kg")
+client = genai.Client(api_key="AIzaSyBRvzfm-")
 
 
 def connect_db():
@@ -30,10 +30,6 @@ def connect_db():
 def extract_info_from_gemini(content):
     prompt = f"""Extract the rental room information from the following text.
                 Output a valid JSON object that contains exactly the following fields:
-                - content (the original text),
-                - address (a generalized address suitable for mapping; include only essential location details in the following order: first, the alley name (ngõ) if available, then the street, ward, district, and city. Exclude overly specific details such as house numbers or additional lanes),
-                - price (an integer, without currency symbols),
-                - room_type,
                 - floor,
                 - elevator (a boolean, true or false),
                 - area,
@@ -148,7 +144,7 @@ def geocoding_goong(address):
 
 def geocoding_openmaps(address):
     base_url = "https://mapapis.openmap.vn/v1"
-    apikey = "dOVlwo9Ti1GAQKUppoeHuD2oq9ioXoyQ"
+    apikey = "dOVlwo9Ti1GAQKUppioXoyQ"
 
     res = requests.get(f"{base_url}/geocode/forward?address={address}&apikey={apikey}")
 
